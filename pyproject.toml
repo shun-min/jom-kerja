@@ -1,0 +1,58 @@
+[build-system]
+requires = [
+    "setuptools",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alarm"
+version = "2026.02.13"
+description = "Personal reminder system"
+requires-python = ">=3.14.3"
+dependencies = [
+    "playsound3",
+    "PySide6",
+]
+
+[project.optional-dependencies]
+# must install for devs
+dev = [
+    "pre-commit",
+    "django-seed",
+]
+# only if you have a specific local use for them
+# or if you want to integrate them with your IDE
+dev-lint = ["ruff", "mypy"]
+
+[tool.setuptools.packages.find]
+where = ["alarm"]
+include = []
+namespaces = false
+
+[tool.ruff]
+target-version = "py314"
+
+[tool.ruff.format]
+# Use single quotes for non-triple-quoted strings.
+quote-style = "single"
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+
+[tool.ruff.lint]
+# Enable most popular linting rules
+select = [
+    "E",   # pycodestyle
+    "F",   # Pyflakes
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+    "I",   # isort
+]
