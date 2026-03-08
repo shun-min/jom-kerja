@@ -11,8 +11,10 @@ version = "2026.02.13"
 description = "Personal reminder system"
 requires-python = ">=3.14.3"
 dependencies = [
+    "gtfs-realtime-bindings",
     "playsound3",
     "PySide6",
+    "requests",
 ]
 
 [project.optional-dependencies]
