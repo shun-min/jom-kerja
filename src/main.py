@@ -42,10 +42,10 @@ class AlarmUI(QMainWindow):
         self.clock_lyt.addWidget(self.alarm_m)
         self.alarm_lyt.addLayout(self.clock_lyt)
 
-        self.main_lyt.addLayout(self.alarm_lyt)
+        # self.main_lyt.addLayout(self.alarm_lyt)
 
         # weather and traffic
-        self.lbl_traffic = QLabel("Traffic")
+        self.lbl_traffic = QLabel("rapidKL status")
         self.lbl_weather_ofc = QLabel("Office Weather")
         self.lbl_weather_sktpk = QLabel("Skatepark Weather")
         self.notif_lyt = QVBoxLayout()
@@ -64,16 +64,16 @@ class AlarmUI(QMainWindow):
         self.active_chk.setChecked(False)
 
     def run(self) -> None:
+        self.fetch_traffic()
+        # self.fetch_weather()
         while self.active_chk.isChecked():
             time_now = datetime.now()
             # if 
-            # self.fetch_traffic()
     
     def check_alarm(self) -> None:
         if self.active_chk.isChecked:
             self.alarm_h.setDisabled(True)
             self.alarm_m.setDisabled(True)
-            # self.run()
         else:
             self.alarm_h.setDisabled(False)
             self.alarm_m.setDisabled(False)
@@ -86,7 +86,7 @@ class AlarmUI(QMainWindow):
         for ent in feed.entity:
             if "786" not in ent.vehicle.trip.route_id:
                 continue
-            print(f"Route: {ent.vehicle.trip.route_id}\nPlate{ent.vehicle.vehicle.license_plate}")
+            print(f"Route: {ent.vehicle.trip.route_id}\nPlate: {ent.vehicle.vehicle.license_plate}")
 
     def play_audio(self):
         playsound(Path("~/test.mp3"))
@@ -102,4 +102,5 @@ if __name__ == "__main__":
     window.setWindowFlags(window.windowFlags() | Qt.WindowMaximizeButtonHint)
     window.showMaximized()
     window.resize(800, 600)
+    window.run()
     app.exec()
