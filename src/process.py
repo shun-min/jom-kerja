@@ -3,14 +3,14 @@ from datetime import datetime, timedelta
 from typing import Dict
 
 from google.transit import gtfs_realtime_pb2
-from pywhatkit.whats import sendwhatmsg
+# from pywhatkit.whats import sendwhatmsg
 # import pywhatkit
 from models import BusRoute, WeatherInfo
 
 
 class DataCtrl(object):
-    traffic: Dict = None
-    weather: Dict = None
+    traffic: BusRoute = None
+    weather: WeatherInfo = None
 
     def filter_req_routes(
         self,
@@ -56,13 +56,14 @@ class PergiKerja():
     def __init__(self):
         super().__init__()
         self.ctrl = DataCtrl()
-        self.setup_ui()
+        # self.setup_ui()
 
     def construct_msg(self) -> str:
         msg = (
-            f"{self.ctrl.weather}\n",
-            f"{self.ctrl.traffic}",
+            f"{self.ctrl.weather.desc_morning}\n{self.ctrl.weather.max_temp}\n",
         )
+        if self.ctrl.traffic:
+            msg += f"\n{self.ctrl.traffic.id} {self.ctrl.traffic.plate_num}"
         return msg
 
     def main(self) -> None:
@@ -79,13 +80,14 @@ class PergiKerja():
             self.ctrl.fetch_weather()
             self.ctrl.fetch_traffic()
             msg = self.construct_msg()
-            sendwhatmsg(
-                phone_no="+60122037682",
-                message=msg,
-                time_hour=start_time.hour,
-                time_min=start_time.minute + 5,
-                wait_time=2,
-            )
+            print(msg)
+            # sendwhatmsg(
+            #     phone_no="+60122037682",
+            #     message=msg,
+            #     time_hour=start_time.hour,
+            #     time_min=start_time.minute + 5,
+            #     wait_time=2,
+            # )
 
 if __name__ == "__main__":
     # app = QApplication([])

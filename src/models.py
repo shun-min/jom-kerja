@@ -11,7 +11,6 @@ class BusRoute():
 
 @dataclass
 class WeatherInfo():
-    id: str
     desc_morning: str
     max_temp: str
     min_temp: str
