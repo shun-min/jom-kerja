@@ -12,9 +12,8 @@ description = "Personal reminder system"
 requires-python = ">=3.14.3"
 dependencies = [
     "gtfs-realtime-bindings",
-    "playsound3",
-    "PySide6",
     "requests",
+    "pywhatkit",
 ]
 
 [project.optional-dependencies]
@@ -28,7 +27,7 @@ dev = [
 dev-lint = ["ruff", "mypy"]
 
 [tool.setuptools.packages.find]
-where = ["alarm"]
+where = ["src"]
 include = []
 namespaces = false
 

@@ -1,20 +1,11 @@
 import requests
 from datetime import datetime, timedelta
-from typing import Annotated, Any, Dict
+from typing import Dict
 
 from google.transit import gtfs_realtime_pb2
-from PySide6.QtCore import (
-    Qt,
-)
-from PySide6.QtWidgets import (
-    QApplication,
-    QLabel,
-    QLineEdit,
-    QMainWindow,
-    QHBoxLayout,
-    QVBoxLayout,
-    QWidget,
-)
+from pywhatkit.whats import sendwhatmsg
+# import pywhatkit
+from models import BusRoute, WeatherInfo
 
 
 class DataCtrl(object):
@@ -40,8 +31,13 @@ class DataCtrl(object):
         filtered_routes = self.filter_req_routes(
             full_feed=feed,
         )
+        routes = list()
         for ent in filtered_routes:
-            print(f"Route: {ent.vehicle.trip.route_id}\nPlate: {ent.vehicle.vehicle.license_plate}")
+            routes = BusRoute(
+                id=ent.vehicle.trip.route_id,
+                plate_num=ent.vehicle.vehicle.license_plate
+            )
+        self.traffic = routes
 
     def fetch_weather(self) -> None:
         url = r"https://api.data.gov.my/weather/forecast/?contains=Subang@location__location_name"
@@ -49,39 +45,25 @@ class DataCtrl(object):
         if not response.ok:
             return "Cannot get weather data. "
         data = response.json()
-        self.traffic = data
+        self.weather = WeatherInfo(
+            desc_morning=data[-1]['morning_forecast'],
+            min_temp=data[-1]['min_temp'],
+            max_temp=data[-1]['max_temp'],
+        )
 
 
-class PergiKerja(QMainWindow):
+class PergiKerja():
     def __init__(self):
         super().__init__()
         self.ctrl = DataCtrl()
         self.setup_ui()
 
-    def setup_ui(self):
-        self.main_lyt = QVBoxLayout()
-
-        # weather and traffic
-        self.lbl_traffic = QLabel("rapidKL status")
-        self.lbl_weather_ofc = QLabel("Office Weather")
-        self.lbl_weather_sktpk = QLabel("Skatepark Weather")
-        self.info_traffic = QLineEdit()
-        self.info_weather_office = QLabel("rapidKL status")
-        self.info_weather_sp = QLabel("rapidKL status")
-        self.notif_lyt = QVBoxLayout()
-        self.notif_lyt.addWidget(self.lbl_traffic)
-        self.notif_lyt.addWidget(self.lbl_weather_ofc)
-        self.notif_lyt.addWidget(self.lbl_weather_sktpk)
-
-        self.main_lyt.addLayout(self.notif_lyt)
-
-        self.central_wgt = QWidget()
-        self.central_wgt.setLayout(self.main_lyt)
-        self.setCentralWidget(self.central_wgt)
-
-    def update_info(self):
-        # self.
-        pass
+    def construct_msg(self) -> str:
+        msg = (
+            f"{self.ctrl.weather}\n",
+            f"{self.ctrl.traffic}",
+        )
+        return msg
 
     def main(self) -> None:
         interval = 20  #TODO: from config
@@ -96,17 +78,23 @@ class PergiKerja(QMainWindow):
                 continue
             self.ctrl.fetch_weather()
             self.ctrl.fetch_traffic()
-            self.update_info()
+            msg = self.construct_msg()
+            sendwhatmsg(
+                phone_no="+60122037682",
+                message=msg,
+                time_hour=start_time.hour,
+                time_min=start_time.minute + 5,
+                wait_time=2,
+            )
 
 if __name__ == "__main__":
-    app = QApplication([])
-    window = PergiKerja()
-    # win_ico = QPixmap(r"")
-    # window.setWindowIcon(win_ico)
-    window.setWindowTitle("Reminder")
-    window.setWindowFlags(window.windowFlags() | Qt.WindowType.WindowMinimizeButtonHint)
-    window.setWindowFlags(window.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint)
-    window.showMaximized()
-    window.resize(800, 600)
-    window.main()
-    app.exec()
+    # app = QApplication([])
+    proc = PergiKerja()
+    # window.setWindowTitle("Reminder")
+    # window.setWindowFlags(window.windowFlags() | Qt.WindowType.WindowMinimizeButtonHint)
+    # window.setWindowFlags(window.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint)
+    # window.showMaximized()
+    # window.resize(800, 600)
+    # window.main()
+    # app.exec()
+    proc.main()
