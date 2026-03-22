@@ -1,22 +1,29 @@
 import requests
+import json
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Dict
 
 from google.transit import gtfs_realtime_pb2
-# from pywhatkit.whats import sendwhatmsg
-# import pywhatkit
-from models import BusRoute, WeatherInfo
+from models import *
 
 
 class DataCtrl(object):
     traffic: BusRoute = None
     weather: WeatherInfo = None
+    config: Configs = None
+
+    def get_config(self):
+        with open(Path("./src/tool.json"), "r") as x:
+            self.config = Configs(
+                # json.load(x) # convert to attribes
+            )
 
     def filter_req_routes(
         self,
         full_feed
     ) -> None:
-        your_routes = ["786", "787"] # get from configs
+        your_routes = self.config.bus_routes
         routes = [
             ent for ent in full_feed.entity
             if ent.vehicle.trip.route_id in your_routes
@@ -56,24 +63,23 @@ class PergiKerja():
     def __init__(self):
         super().__init__()
         self.ctrl = DataCtrl()
-        # self.setup_ui()
+        self.ctrl.get_config()
 
     def construct_msg(self) -> str:
-        msg = (
-            f"{self.ctrl.weather.desc_morning}\n{self.ctrl.weather.max_temp}\n",
-        )
+        msg = f"Weather: {self.ctrl.weather.desc_morning}\n{self.ctrl.weather.max_temp}\n"
         if self.ctrl.traffic:
-            msg += f"\n{self.ctrl.traffic.id} {self.ctrl.traffic.plate_num}"
+            msg += f"\nBus Route: {self.ctrl.traffic.id} {self.ctrl.traffic.plate_num}"
         return msg
 
     def main(self) -> None:
-        interval = 20  #TODO: from config
+        interval = self.ctrl.config.interval  # minutes
         delta = timedelta(minutes=interval)
         running = True
         start_time = datetime.now()
         while running:
-            if start_time.hour <= 7 or start_time.hour >= 10:
+            if start_time.hour <= 7 or start_time.hour >= 23:
                 running = False
+                continue
             time_diff = datetime.now() - start_time
             if time_diff.seconds > 2 and time_diff.seconds < delta.seconds:
                 continue
@@ -81,22 +87,14 @@ class PergiKerja():
             self.ctrl.fetch_traffic()
             msg = self.construct_msg()
             print(msg)
-            # sendwhatmsg(
-            #     phone_no="+60122037682",
-            #     message=msg,
-            #     time_hour=start_time.hour,
-            #     time_min=start_time.minute + 5,
-            #     wait_time=2,
-            # )
+            res = requests.post(
+                url=r"https://ntfy.sh/jxKz3s8A",
+                data=msg,
+                headers={
+                    "Title": "RapidKL stat and weather"
+                }
+            )
 
 if __name__ == "__main__":
-    # app = QApplication([])
     proc = PergiKerja()
-    # window.setWindowTitle("Reminder")
-    # window.setWindowFlags(window.windowFlags() | Qt.WindowType.WindowMinimizeButtonHint)
-    # window.setWindowFlags(window.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint)
-    # window.showMaximized()
-    # window.resize(800, 600)
-    # window.main()
-    # app.exec()
     proc.main()

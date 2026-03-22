@@ -1,7 +1,13 @@
 from dataclasses import asdict, dataclass
-from typing import Annotated, Any, Dict, TypeVar, Union, Optional
+from typing import Annotated, Any, List, Dict, TypeVar, Union, Optional
 
 # TODO: use pydantic
+
+@dataclass
+class Configs():
+    bus_routes: List
+    interval: int
+
 
 @dataclass
 class BusRoute():
