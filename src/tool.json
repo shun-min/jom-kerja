@@ -1,8 +1,3 @@
 {
-    "bus_routes": ["786", "787"],
-    "start_hour": 7,
-    "start_minute": 0,
-    "end_hour": 9,
-    "end_minute": 30,
-    "interval": 20
+    "bus_routes": ["786", "787"]
 }

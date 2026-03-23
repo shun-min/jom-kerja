@@ -1,6 +1,6 @@
 import requests
 import json
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict
 
@@ -15,9 +15,8 @@ class DataCtrl(object):
 
     def get_config(self):
         with open(Path("./src/tool.json"), "r") as x:
-            self.config = Configs(
-                # json.load(x) # convert to attribes
-            )
+            data = json.load(x)
+            self.config = Configs(**data)
 
     def filter_req_routes(
         self,
@@ -72,28 +71,28 @@ class PergiKerja():
         return msg
 
     def main(self) -> None:
-        interval = self.ctrl.config.interval  # minutes
-        delta = timedelta(minutes=interval)
-        running = True
-        start_time = datetime.now()
-        while running:
-            if start_time.hour <= 7 or start_time.hour >= 23:
-                running = False
-                continue
-            time_diff = datetime.now() - start_time
-            if time_diff.seconds > 2 and time_diff.seconds < delta.seconds:
-                continue
-            self.ctrl.fetch_weather()
-            self.ctrl.fetch_traffic()
-            msg = self.construct_msg()
-            print(msg)
-            res = requests.post(
-                url=r"https://ntfy.sh/jxKz3s8A",
-                data=msg,
-                headers={
-                    "Title": "RapidKL stat and weather"
-                }
-            )
+        # interval = self.ctrl.config.interval  # minutes
+        # delta = timedelta(minutes=interval)
+        # running = True
+        # start_time = datetime.now()
+        # while running:
+        #     if start_time.hour <= 7 or start_time.hour >= 23:
+        #         running = False
+        #         continue
+        #     time_diff = datetime.now() - start_time
+        #     if time_diff.seconds > 2 and time_diff.seconds < delta.seconds:
+        #         continue
+        self.ctrl.fetch_weather()
+        self.ctrl.fetch_traffic()
+        msg = self.construct_msg()
+        print(msg)
+        res = requests.post(
+            url=r"https://ntfy.sh/jxKz3s8A",
+            data=msg,
+            headers={
+                "Title": "RapidKL stat and weather"
+            }
+        )
 
 if __name__ == "__main__":
     proc = PergiKerja()

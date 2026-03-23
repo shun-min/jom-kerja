@@ -5,8 +5,7 @@ from typing import Annotated, Any, List, Dict, TypeVar, Union, Optional
 
 @dataclass
 class Configs():
-    bus_routes: List
-    interval: int
+    bus_routes: List[str]
 
 
 @dataclass
