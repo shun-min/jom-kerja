@@ -1,3 +1,45 @@
 {
-    "bus_routes": ["786", "787"]
+  "work": {
+    "days": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "departure": {
+      "bus": {
+        "routes": [
+          "787"
+        ]
+      }
+    },
+    "arrival": {
+      "bus": {
+        "routes": [
+          "786"
+        ]
+      }
+    }
+  },
+  "rest": {
+    "days": [
+      "Saturday",
+      "Sunday"
+    ],
+    "departure": {
+      "bus": {
+        "routes": [
+          "786"
+        ]
+      }
+    },
+    "arrival": {
+      "LRT": {
+        "routes": [
+          "Kelana Jaya"
+        ]
+      }
+    }
+  }
 }
