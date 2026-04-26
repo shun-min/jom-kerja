@@ -1,44 +1,47 @@
 {
-  "work": {
-    "days": [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday"
-    ],
-    "departure": {
-      "bus": {
-        "routes": [
-          "787"
-        ]
+  "bus_routes": [786, 787],
+  "data": {
+    "work": {
+      "days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "departure": {
+        "bus": {
+          "routes": [
+            "787"
+          ]
+        }
+      },
+      "return": {
+        "bus": {
+          "routes": [
+            "786"
+          ]
+        }
       }
     },
-    "arrival": {
-      "bus": {
-        "routes": [
-          "786"
-        ]
-      }
-    }
-  },
-  "rest": {
-    "days": [
-      "Saturday",
-      "Sunday"
-    ],
-    "departure": {
-      "bus": {
-        "routes": [
-          "786"
-        ]
-      }
-    },
-    "arrival": {
-      "LRT": {
-        "routes": [
-          "Kelana Jaya"
-        ]
+    "rest": {
+      "days": [
+        "Saturday",
+        "Sunday"
+      ],
+      "departure": {
+        "bus": {
+          "routes": [
+            "786"
+          ]
+        }
+      },
+      "return": {
+        "LRT": {
+          "routes": [
+            "Kelana Jaya"
+          ]
+        }
       }
     }
   }

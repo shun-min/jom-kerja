@@ -6,6 +6,7 @@ from typing import Annotated, Any, List, Dict, TypeVar, Union, Optional
 @dataclass
 class Configs():
     bus_routes: List[str]
+    data: Dict
 
 
 @dataclass

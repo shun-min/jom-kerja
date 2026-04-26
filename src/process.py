@@ -65,9 +65,9 @@ class PergiKerja():
         self.ctrl.get_config()
 
     def construct_msg(self) -> str:
-        msg = f"Weather: {self.ctrl.weather.desc_morning}\n{self.ctrl.weather.max_temp}\n"
+        msg = f"Weather: {self.ctrl.weather.desc_morning}\nMax temp: {self.ctrl.weather.max_temp}\nTraffic:"
         if self.ctrl.traffic:
-            msg += f"\nBus Route: {self.ctrl.traffic.id} {self.ctrl.traffic.plate_num}"
+            msg += f"\n{self.ctrl.traffic.id} {self.ctrl.traffic.plate_num}"
         return msg
 
     def main(self) -> None:
