@@ -1,47 +1,57 @@
 {
-  "bus_routes": [786, 787],
-  "data": {
-    "work": {
-      "days": [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday"
+  "time_zone": "GMT+8",
+  "work": {
+    "days": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "departure": {
+      "vehicle": "bus",
+      "routes": [
+        "787"
       ],
-      "departure": {
-        "bus": {
-          "routes": [
-            "787"
-          ]
-        }
-      },
-      "return": {
-        "bus": {
-          "routes": [
-            "786"
-          ]
-        }
+      "time": {
+        "h": 9,
+        "m": 0
       }
     },
-    "rest": {
-      "days": [
-        "Saturday",
-        "Sunday"
+    "return": {
+      "vehicle": "bus",
+      "routes": [
+        "786"
       ],
-      "departure": {
-        "bus": {
-          "routes": [
-            "786"
-          ]
-        }
-      },
-      "return": {
-        "LRT": {
-          "routes": [
-            "Kelana Jaya"
-          ]
-        }
+      "time": {
+        "h": 19,
+        "m": 0
+      }
+    }
+  },
+  "rest": {
+    "days": [
+      "Saturday",
+      "Sunday"
+    ],
+    "departure": {
+      "vehicle": "bus",
+      "routes": [
+        "786"
+      ],
+      "time": {
+        "h": 9,
+        "m": 0
+      }
+    },
+    "return": {
+      "vehicle": "LRT",
+      "routes": [
+        "Kelana Jaya"
+      ],
+      "time": {
+        "h": 14,
+        "m": 0
       }
     }
   }

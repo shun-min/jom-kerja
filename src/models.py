@@ -5,8 +5,15 @@ from typing import Annotated, Any, List, Dict, TypeVar, Union, Optional
 
 @dataclass
 class Configs():
-    bus_routes: List[str]
-    data: Dict
+    def __init__(self, d):
+        for k, v in d.items():
+            if isinstance(v, (list, tuple)):
+                setattr(self, k, [Configs(x) if isinstance(x, dict) else x for x in v])
+            else:
+                setattr(self, k, Configs(v) if isinstance(v, dict) else v)
+    # time_zone: str
+    # work: Dict
+    # rest: Dict
 
 
 @dataclass
