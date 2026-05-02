@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Dict
 
 from google.transit import gtfs_realtime_pb2
+
+from constants import BUS_KL_URL, WEATHER_URL
 from models import *
 
 
@@ -16,38 +18,39 @@ class DataCtrl(object):
     def get_config(self):
         with open(Path("./src/tool.json"), "r") as x:
             data = json.load(x)
-            self.config = Configs(**data)
+            self.config = Configs(data)
 
     def filter_req_routes(
         self,
         full_feed
     ) -> None:
-        your_routes = self.config.bus_routes
-        routes = [
+        routes = self.config.work.departure.routes
+        result = [
             ent for ent in full_feed.entity
-            if ent.vehicle.trip.route_id in your_routes
+            if ent.vehicle.trip.route_id in routes
         ]
-        return routes
+        return result
 
     def fetch_traffic(self):
         feed = gtfs_realtime_pb2.FeedMessage()
-        url = r"https://api.data.gov.my/gtfs-realtime/vehicle-position/prasarana?category=rapid-bus-kl"
-        response = requests.get(url)
+        response = requests.get(BUS_KL_URL)
         feed.ParseFromString(response.content)
         filtered_routes = self.filter_req_routes(
             full_feed=feed,
         )
         routes = list()
         for ent in filtered_routes:
-            routes = BusRoute(
-                id=ent.vehicle.trip.route_id,
-                plate_num=ent.vehicle.vehicle.license_plate
-            )
+            if self.config.work.departure.vehicle == "bus":
+                routes.append(
+                    BusRoute(
+                        id=ent.vehicle.trip.route_id,
+                        plate_num=ent.vehicle.vehicle.license_plate
+                    )
+                )
         self.traffic = routes
 
     def fetch_weather(self) -> None:
-        url = r"https://api.data.gov.my/weather/forecast/?contains=Subang@location__location_name"
-        response = requests.get(url)
+        response = requests.get(WEATHER_URL)
         if not response.ok:
             return "Cannot get weather data. "
         data = response.json()
