@@ -1,12 +1,12 @@
 import requests
 import json
-# from datetime import datetime, timedelta
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict
 
 from google.transit import gtfs_realtime_pb2
 
-from constants import BUS_KL_URL, WEATHER_URL
+from constants import *
 from models import *
 
 
@@ -18,7 +18,7 @@ class DataCtrl(object):
     def get_config(self):
         with open(Path("./src/tool.json"), "r") as x:
             data = json.load(x)
-            self.config = Configs(data)
+            self.config = Configs(**data)
 
     def filter_req_routes(
         self,
@@ -31,23 +31,45 @@ class DataCtrl(object):
         ]
         return result
 
-    def fetch_traffic(self):
+    def process_trip(
+        self,
+        active_trip: Trip,
+    ):
+        if active_trip.vehicle == VEHICLE_BUS:
+            URL = BUS_KL_URL
+        elif active_trip.vehicle == VEHICLE_TRAIN:
+            URL = LRT_KELANA_URL
+        else:
+            return
+        response = requests.get(URL)
         feed = gtfs_realtime_pb2.FeedMessage()
-        response = requests.get(BUS_KL_URL)
         feed.ParseFromString(response.content)
         filtered_routes = self.filter_req_routes(
             full_feed=feed,
         )
         routes = list()
         for ent in filtered_routes:
-            if self.config.work.departure.vehicle == "bus":
+            if active_trip.vehicle == VEHICLE_BUS:
                 routes.append(
                     BusRoute(
                         id=ent.vehicle.trip.route_id,
                         plate_num=ent.vehicle.vehicle.license_plate
                     )
                 )
+            else:
+                routes.append()
         self.traffic = routes
+
+    def fetch_trips(self):
+        now = datetime.now().astimezone()
+        active_trips = list()
+        for trip in self.config.trips:
+            if now.day not in trip.days or now.hour not in trip.time["h"] or now.minute not in trip.time["m"]:
+                continue
+            active_trips.append(trip)
+        
+        for t in active_trips:
+            self.process_trip(active_trip=t)
 
     def fetch_weather(self) -> None:
         response = requests.get(WEATHER_URL)
@@ -86,7 +108,7 @@ class PergiKerja():
         #     if time_diff.seconds > 2 and time_diff.seconds < delta.seconds:
         #         continue
         self.ctrl.fetch_weather()
-        self.ctrl.fetch_traffic()
+        self.ctrl.fetch_trips()
         msg = self.construct_msg()
         print(msg)
         res = requests.post(

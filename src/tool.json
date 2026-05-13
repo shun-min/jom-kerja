@@ -1,6 +1,8 @@
 {
   "time_zone": "GMT+8",
-  "work": {
+  "trips": [{
+    "activity": "work",
+    "journey": "departure",
     "days": [
       "Monday",
       "Tuesday",
@@ -8,51 +10,63 @@
       "Thursday",
       "Friday"
     ],
-    "departure": {
-      "vehicle": "bus",
-      "routes": [
-        "787"
-      ],
-      "time": {
-        "h": 9,
-        "m": 0
-      }
+    "time": {
+      "h": 9,
+      "m": 0
     },
-    "return": {
-      "vehicle": "bus",
-      "routes": [
-        "786"
-      ],
-      "time": {
-        "h": 19,
-        "m": 0
-      }
-    }
+    "vehicle": "bus",
+    "routes": [
+      "787"
+    ]
+  },{
+    "activity": "work",
+    "journey": "return",
+    "days": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "time": {
+      "h": 19,
+      "m": 0
+    },
+    "vehicle": "bus",
+    "routes": [
+      "786"
+    ]
   },
-  "rest": {
+  {
+    "activity": "rest",
+    "journey": "return",
     "days": [
       "Saturday",
       "Sunday"
     ],
-    "departure": {
-      "vehicle": "bus",
-      "routes": [
-        "786"
-      ],
-      "time": {
-        "h": 9,
-        "m": 0
-      }
+    "time": {
+      "h": 9,
+      "m": 0
     },
-    "return": {
-      "vehicle": "LRT",
-      "routes": [
-        "Kelana Jaya"
-      ],
-      "time": {
-        "h": 14,
-        "m": 0
-      }
-    }
-  }
+    "vehicle": "bus",
+    "routes": [
+      "786"
+    ]
+  },
+  {
+    "activity": "rest",
+    "journey": "return",
+    "days": [
+      "Saturday",
+      "Sunday"
+    ],
+    "time": {
+      "h": 14,
+      "m": 0
+    },
+    "vehicle": "LRT",
+    "routes": [
+      "Kelana Jaya"
+    ]
+  }]
 }
