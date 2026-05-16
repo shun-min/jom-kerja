@@ -1,6 +1,7 @@
 {
   "general": {
-    "time": "GMT+8"
+    "timezone": "GMT+8",
+    "interval": "120"
   },
   "trips": [{
     "activity": "work",
@@ -62,7 +63,7 @@
       "m": 0
     },
     "duration_end": {
-      "h": 13,
+      "h": 10,
       "m": 0
     },
     "vehicle": "bus",
@@ -88,7 +89,7 @@
     },
     "vehicle": "LRT",
     "routes": [
-      "Kelana Jaya"
+      "KJL"
     ]
   }]
 }

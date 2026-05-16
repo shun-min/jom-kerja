@@ -5,19 +5,19 @@ from typing import Annotated, Any, List, Dict, TypeVar, Union, Optional
 
 
 @dataclass
-class Configs():
-    # def __init__(self, d):
-    #     for k, v in d.items():
-    #         if isinstance(v, (list, tuple)):
-    #             setattr(self, k, [Configs(x) if isinstance(x, dict) else x for x in v])
-    #         else:
-    #             setattr(self, k, Configs(v) if isinstance(v, dict) else v)
-    general: Dict[str, Any]
+class Configs:
+    general: GeneralSettings
     trips: List[Trip]
 
 
 @dataclass
-class Trip():
+class GeneralSettings:
+    timezone: str
+    interval: str
+
+
+@dataclass
+class Trip:
     activity: str
     location: str
     journey: str
@@ -30,8 +30,10 @@ class Trip():
 
 @dataclass
 class RouteInfo():
-    id: str = "-"
-    plate_num: str = "-"
+    bus_id: Optional[str] = "-"
+    plate_num: Optional[str] = "-"
+    line_id: Optional[str] = ""
+    status: Optional[str] = "inactive"
 
 
 @dataclass

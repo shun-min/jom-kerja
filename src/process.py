@@ -19,11 +19,13 @@ class DataCtrl(object):
     def get_config(self):
         with open(Path("./src/tool.json"), "r") as x:
             data = json.load(x)
+            gen = data["general"]
             trips = list()
             for t in data['trips']:
                 trips.append(Trip(**t))
+
             self.config = Configs(
-                general=data["general"],
+                general=GeneralSettings(**gen),
                 trips=trips,
             )
 
@@ -57,37 +59,44 @@ class DataCtrl(object):
 
     def process_traffic(
         self,
-    ):
-        # if not self.active_trip:
-        #     self.traffic = [RouteInfo()]
-        #     return
-        if self.active_trip.vehicle == VEHICLE_BUS:
-            URL = BUS_KL_URL
-        elif self.active_trip.vehicle == VEHICLE_TRAIN:
-            URL = LRT_KELANA_URL
-        else:
-            return
-        response = requests.get(URL)
-        feed = gtfs_realtime_pb2.FeedMessage()
-        feed.ParseFromString(response.content)
-        filtered_routes = self.filter_req_routes(
-            full_feed=feed,
-        )
+    ) -> None:
         routes = list()
-        for ent in filtered_routes:
-            if self.active_trip.vehicle == VEHICLE_BUS:
+        if self.active_trip.vehicle == VEHICLE_BUS:        
+            response = requests.get(BUS_KL_URL)
+            feed = gtfs_realtime_pb2.FeedMessage()
+            feed.ParseFromString(response.content)
+            filtered_routes = self.filter_req_routes(
+                full_feed=feed,
+            )
+            for ent in filtered_routes:
+                if self.active_trip.vehicle == VEHICLE_BUS:
+                    routes.append(
+                        RouteInfo(
+                            bus_id=ent.vehicle.trip.route_id,
+                            plate_num=ent.vehicle.vehicle.license_plate
+                        )
+                    )
+        elif self.active_trip.vehicle == VEHICLE_TRAIN:
+            response = requests.get(LRT_STAT_URL)
+            if not response.ok:
+                return
+            res = response.json()
+            for rail_line in res["Data"]:
+                if rail_line["LineID"] not in self.active_trip.routes:
+                    continue
                 routes.append(
                     RouteInfo(
-                        id=ent.vehicle.trip.route_id,
-                        plate_num=ent.vehicle.vehicle.license_plate
+                        line_id=rail_line["LineID"],
+                        status=rail_line["Status"],
                     )
                 )
+                break
+        else:
+            return
+        
         self.traffic = routes
 
     def fetch_weather(self) -> None:
-        # if not self.active_trip:
-        #     self.weather = WeatherInfo()
-        #     return
         FULL_ENDPOINT = rf"{WEATHER_URL}{self.active_trip.location}"
         response = requests.get(FULL_ENDPOINT)
         if not response.ok:
@@ -112,17 +121,21 @@ class PergiKerja():
         msg = f"Weather: {self.ctrl.weather.morning}\nMax temp: {self.ctrl.weather.max_temp}\nTraffic:"
         for trf in self.ctrl.traffic:
             trf: RouteInfo
-            msg += f"\nID: {trf.id} Plate: {trf.plate_num}"
+            if self.ctrl.active_trip.vehicle == VEHICLE_BUS:
+                msg += f"\nID: {trf.bus_id}\nPlate: {trf.plate_num}"
+            elif self.ctrl.active_trip.vehicle == VEHICLE_TRAIN:
+                msg += f"\nTrain Line: {trf.line_id}\nStatus: {trf.status}"
         return msg
 
     def main(self) -> None:
-        # interval = self.ctrl.config.interval  # minutes
+        # interval = int(self.ctrl.config.general.interval)  # seconds
         # delta = timedelta(minutes=interval)
         # start_time = datetime.now()
         # running = True
         # while running:
         #     time_diff = datetime.now() - start_time
-        #     if time_diff.seconds > 2 and time_diff.seconds < delta.seconds:
+        #     if time_diff.seconds > 120 and time_diff.seconds < delta.seconds:
+        #         # TODO: what is this
         #         continue
         self.ctrl.fetch_trips()
         if not self.ctrl.active_trip:
