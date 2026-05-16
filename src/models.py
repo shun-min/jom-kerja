@@ -12,28 +12,30 @@ class Configs():
     #             setattr(self, k, [Configs(x) if isinstance(x, dict) else x for x in v])
     #         else:
     #             setattr(self, k, Configs(v) if isinstance(v, dict) else v)
-    time_zone: str
+    general: Dict[str, Any]
     trips: List[Trip]
 
 
 @dataclass
 class Trip():
     activity: str
+    location: str
     journey: str
     days: List[str]
-    time: Dict[str, int]
+    duration_start: Dict[str, int]
+    duration_end: Dict[str, int]
     vehicle: str
     routes: List[str]
 
 
 @dataclass
-class BusRoute():
-    id: str
-    plate_num: str
+class RouteInfo():
+    id: str = "-"
+    plate_num: str = "-"
 
 
 @dataclass
 class WeatherInfo():
-    desc_morning: str
-    max_temp: str
-    min_temp: str
+    desc: str = "No trip weather"
+    max_temp: str = "-"
+    min_temp: str = "-"

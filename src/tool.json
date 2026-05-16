@@ -1,7 +1,10 @@
 {
-  "time_zone": "GMT+8",
+  "general": {
+    "time": "GMT+8"
+  },
   "trips": [{
     "activity": "work",
+    "location": "Subang@location__location_name",
     "journey": "departure",
     "days": [
       "Monday",
@@ -10,8 +13,12 @@
       "Thursday",
       "Friday"
     ],
-    "time": {
-      "h": 9,
+    "duration_start": {
+      "h": 8,
+      "m": 0
+    },
+    "duration_end": {
+      "h": 10,
       "m": 0
     },
     "vehicle": "bus",
@@ -20,6 +27,7 @@
     ]
   },{
     "activity": "work",
+    "location": "Subang@location__location_name",
     "journey": "return",
     "days": [
       "Monday",
@@ -28,8 +36,12 @@
       "Thursday",
       "Friday"
     ],
-    "time": {
-      "h": 19,
+    "duration_start": {
+      "h": 18,
+      "m": 0
+    },
+    "duration_end": {
+      "h": 20,
       "m": 0
     },
     "vehicle": "bus",
@@ -39,13 +51,18 @@
   },
   {
     "activity": "rest",
-    "journey": "return",
+    "location": "Subang@location__location_name",
+    "journey": "departure",
     "days": [
       "Saturday",
       "Sunday"
     ],
-    "time": {
-      "h": 9,
+    "duration_start": {
+      "h": 8,
+      "m": 0
+    },
+    "duration_end": {
+      "h": 13,
       "m": 0
     },
     "vehicle": "bus",
@@ -55,13 +72,18 @@
   },
   {
     "activity": "rest",
+    "location": "Subang@location__location_name",
     "journey": "return",
     "days": [
       "Saturday",
       "Sunday"
     ],
-    "time": {
-      "h": 14,
+    "duration_start": {
+      "h": 13,
+      "m": 30
+    },
+    "duration_end": {
+      "h": 16,
       "m": 0
     },
     "vehicle": "LRT",
