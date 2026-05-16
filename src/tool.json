@@ -27,7 +27,7 @@
     ]
   },{
     "activity": "work",
-    "location": "Subang@location__location_name",
+    "location": "Petaling%20Jaya@location__location_name",
     "journey": "return",
     "days": [
       "Monday",
@@ -72,7 +72,7 @@
   },
   {
     "activity": "rest",
-    "location": "Subang@location__location_name",
+    "location": "Petaling%20Jaya@location__location_name",
     "journey": "return",
     "days": [
       "Saturday",

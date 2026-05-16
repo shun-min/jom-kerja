@@ -36,6 +36,8 @@ class RouteInfo():
 
 @dataclass
 class WeatherInfo():
-    desc: str = "No trip weather"
+    morning: str = "No morning weather"
+    afternoon: str = "No afternoon weather"
+    night: str = "No night weather"
     max_temp: str = "-"
     min_temp: str = "-"
