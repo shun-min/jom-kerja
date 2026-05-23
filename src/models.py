@@ -24,14 +24,17 @@ class Trip:
     days: List[str]
     duration_start: Dict[str, int]
     duration_end: Dict[str, int]
-    vehicle: str
-    routes: List[str]
+    routes: List[Dict]
 
 
 @dataclass
-class RouteInfo():
+class BusInfo():
     bus_id: Optional[str] = "-"
     plate_num: Optional[str] = "-"
+
+
+@dataclass
+class TrainInfo():
     line_id: Optional[str] = ""
     status: Optional[str] = "inactive"
 

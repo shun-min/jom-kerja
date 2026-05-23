@@ -22,9 +22,15 @@
       "h": 10,
       "m": 0
     },
-    "vehicle": "bus",
     "routes": [
-      "787"
+      {
+        "vehicle": "bus",
+        "code": "787"
+      },
+      {
+        "vehicle": "LRT",
+        "code": "KJL"
+      }
     ]
   },{
     "activity": "work",
@@ -45,9 +51,15 @@
       "h": 20,
       "m": 0
     },
-    "vehicle": "bus",
     "routes": [
-      "786"
+      {
+        "vehicle": "LRT",
+        "code": "KJL"
+      },
+      {
+        "vehicle": "bus",
+        "code": "786"
+      }
     ]
   },
   {
@@ -66,9 +78,15 @@
       "h": 10,
       "m": 0
     },
-    "vehicle": "bus",
     "routes": [
-      "786"
+      {
+        "vehicle": "bus",
+        "code": "786"
+      },
+      {
+        "vehicle": "LRT",
+        "code": "KGL"
+      }
     ]
   },
   {
@@ -87,9 +105,15 @@
       "h": 16,
       "m": 0
     },
-    "vehicle": "LRT",
     "routes": [
-      "KJL"
+      {
+        "vehicle": "LRT",
+        "code": "KGL"
+      },
+      {
+        "vehicle": "LRT",
+        "code": "KJL"
+      }
     ]
   }]
 }

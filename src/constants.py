@@ -7,6 +7,7 @@ WEATHER_URL = r"https://api.data.gov.my/weather/forecast/?contains="
 VEHICLE_BUS = "bus"
 VEHICLE_TRAIN = "LRT"
 TRAIN_KJL = "KJL"
+TRAIN_KGL = "KGL"
 
 WEEKDAY = {
     0: "Monday",

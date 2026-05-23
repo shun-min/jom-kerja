@@ -61,38 +61,38 @@ class DataCtrl(object):
         self,
     ) -> None:
         routes = list()
-        if self.active_trip.vehicle == VEHICLE_BUS:        
-            response = requests.get(BUS_KL_URL)
-            feed = gtfs_realtime_pb2.FeedMessage()
-            feed.ParseFromString(response.content)
-            filtered_routes = self.filter_req_routes(
-                full_feed=feed,
-            )
-            for ent in filtered_routes:
-                if self.active_trip.vehicle == VEHICLE_BUS:
+        for r in self.active_trip.routes:
+            if r["vehicle"] == VEHICLE_BUS:        
+                response = requests.get(BUS_KL_URL)
+                feed = gtfs_realtime_pb2.FeedMessage()
+                feed.ParseFromString(response.content)
+                filtered_routes = self.filter_req_routes(
+                    full_feed=feed,
+                )
+                for ent in filtered_routes:
                     routes.append(
-                        RouteInfo(
+                        BusInfo(
                             bus_id=ent.vehicle.trip.route_id,
                             plate_num=ent.vehicle.vehicle.license_plate
                         )
                     )
-        elif self.active_trip.vehicle == VEHICLE_TRAIN:
-            response = requests.get(LRT_STAT_URL)
-            if not response.ok:
-                return
-            res = response.json()
-            for rail_line in res["Data"]:
-                if rail_line["LineID"] not in self.active_trip.routes:
-                    continue
-                routes.append(
-                    RouteInfo(
-                        line_id=rail_line["LineID"],
-                        status=rail_line["Status"],
+            elif r["vehicle"] == VEHICLE_TRAIN:
+                response = requests.get(LRT_STAT_URL)
+                if not response.ok:
+                    return
+                res = response.json()
+                for rail_line in res["Data"]:
+                    if rail_line["LineID"] not in r["code"]:
+                        continue
+                    routes.append(
+                        TrainInfo(
+                            line_id=rail_line["LineID"],
+                            status=rail_line["Status"],
+                        )
                     )
-                )
-                break
-        else:
-            return
+                    break
+            else:
+                return
         
         self.traffic = routes
 
@@ -114,16 +114,16 @@ class DataCtrl(object):
 class PergiKerja():
     def __init__(self, ctrl):
         super().__init__()
-        self.ctrl=ctrl
+        self.ctrl: DataCtrl = ctrl
         self.config = ctrl.config
 
     def construct_msg(self) -> str:
         msg = f"Weather: {self.ctrl.weather.morning}\nMax temp: {self.ctrl.weather.max_temp}\nTraffic:"
         for trf in self.ctrl.traffic:
-            trf: RouteInfo
-            if self.ctrl.active_trip.vehicle == VEHICLE_BUS:
-                msg += f"\nID: {trf.bus_id}\nPlate: {trf.plate_num}"
-            elif self.ctrl.active_trip.vehicle == VEHICLE_TRAIN:
+            trf: Union[BusInfo, TrainInfo]
+            if isinstance(trf, BusInfo):
+                msg += f"\nID: {trf.bus_id}\nPlate: {trf.plate_num}\n"
+            elif isinstance(trf, TrainInfo):
                 msg += f"\nTrain Line: {trf.line_id}\nStatus: {trf.status}"
         return msg
 
