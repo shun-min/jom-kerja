@@ -112,10 +112,10 @@ class DataCtrl(object):
 
 
 class PergiKerja():
-    def __init__(self):
+    def __init__(self, ctrl):
         super().__init__()
-        self.ctrl = DataCtrl()
-        self.ctrl.get_config()
+        self.ctrl=ctrl
+        self.config = ctrl.config
 
     def construct_msg(self) -> str:
         msg = f"Weather: {self.ctrl.weather.morning}\nMax temp: {self.ctrl.weather.max_temp}\nTraffic:"
@@ -127,21 +127,7 @@ class PergiKerja():
                 msg += f"\nTrain Line: {trf.line_id}\nStatus: {trf.status}"
         return msg
 
-    def main(self) -> None:
-        # interval = int(self.ctrl.config.general.interval)  # seconds
-        # delta = timedelta(minutes=interval)
-        # start_time = datetime.now()
-        # running = True
-        # while running:
-        #     time_diff = datetime.now() - start_time
-        #     if time_diff.seconds > 120 and time_diff.seconds < delta.seconds:
-        #         # TODO: what is this
-        #         continue
-        self.ctrl.fetch_trips()
-        if not self.ctrl.active_trip:
-            print("No active trip")
-            return 
-
+    def main(self) -> None:       
         self.ctrl.process_traffic()
         self.ctrl.fetch_weather()
         # TODO: Add process_weather
@@ -156,5 +142,24 @@ class PergiKerja():
         )
 
 if __name__ == "__main__":
-    proc = PergiKerja()
-    proc.main()
+        
+    ctrl = DataCtrl()
+    ctrl.get_config()
+    ctrl.fetch_trips()
+    
+    interval = int(ctrl.config.general.interval)  # minutes
+    delta = timedelta(minutes=interval)
+    start_time = datetime.now()
+    running = True
+    while running:
+        time_diff = datetime.now() - start_time
+        if time_diff.seconds != 0 and time_diff.seconds < delta.seconds:
+            continue
+
+        if not ctrl.active_trip:
+            print("No active trip")
+        else:
+            proc = PergiKerja(
+                ctrl=ctrl
+            )
+            proc.main()
