@@ -1,8 +1,9 @@
+# import google
 import requests
+
 import json
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict
 
 from google.transit import gtfs_realtime_pb2
 
@@ -12,7 +13,7 @@ from models import *
 
 class DataCtrl(object):
     config: Configs = None
-    traffic: RouteInfo = None
+    traffic: Union[BusInfo, TrainInfo] = None
     weather: WeatherInfo = None
     active_trip: Trip = None
 
@@ -65,10 +66,22 @@ class DataCtrl(object):
             if r["vehicle"] == VEHICLE_BUS:        
                 response = requests.get(BUS_KL_URL)
                 feed = gtfs_realtime_pb2.FeedMessage()
-                feed.ParseFromString(response.content)
+                try:
+                    feed.ParseFromString(response.content)
+                # except google.protobuf.message.DecodeError:
+                except Exception as e:
+                    pass
+                    
                 filtered_routes = self.filter_req_routes(
                     full_feed=feed,
                 )
+                if not filtered_routes:
+                    routes.append(
+                        BusInfo(
+                            bus_id="Not active",
+                            plate_num="null"
+                        )
+                    )
                 for ent in filtered_routes:
                     routes.append(
                         BusInfo(
@@ -118,11 +131,11 @@ class PergiKerja():
         self.config = ctrl.config
 
     def construct_msg(self) -> str:
-        msg = f"Weather: {self.ctrl.weather.morning}\nMax temp: {self.ctrl.weather.max_temp}\nTraffic:"
+        msg = f"Weather\n\nStatus: {self.ctrl.weather.morning}\nMax temp: {self.ctrl.weather.max_temp}\n\nTraffic"
         for trf in self.ctrl.traffic:
             trf: Union[BusInfo, TrainInfo]
             if isinstance(trf, BusInfo):
-                msg += f"\nID: {trf.bus_id}\nPlate: {trf.plate_num}\n"
+                msg += f"\nBus ID: {trf.bus_id}\nPlate: {trf.plate_num}\n"
             elif isinstance(trf, TrainInfo):
                 msg += f"\nTrain Line: {trf.line_id}\nStatus: {trf.status}"
         return msg
@@ -153,7 +166,7 @@ if __name__ == "__main__":
     running = True
     while running:
         time_diff = datetime.now() - start_time
-        if time_diff.seconds != 0 and time_diff.seconds < delta.seconds:
+        if (time_diff.seconds > 0 or time_diff.microseconds > 20) and time_diff.seconds < delta.seconds:
             continue
 
         if not ctrl.active_trip:
