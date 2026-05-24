@@ -114,13 +114,14 @@ class DataCtrl(object):
         response = requests.get(FULL_ENDPOINT)
         if not response.ok:
             return "Cannot get weather data. "
-        data = response.json()
+        data = response.json()  # 7 days forecast sort in reverse
+        data_today = data[-1]
         self.weather = WeatherInfo(
-            morning=data[-1]['morning_forecast'],
-            afternoon=data[-1]['afternoon_forecast'],
-            night=data[-1]['night_forecast'],
-            min_temp=data[-1]['min_temp'],
-            max_temp=data[-1]['max_temp'],
+            morning=data_today['morning_forecast'],
+            afternoon=data_today['afternoon_forecast'],
+            night=data_today['night_forecast'],
+            min_temp=data_today['min_temp'],
+            max_temp=data_today['max_temp'],
         )
 
 
@@ -131,9 +132,12 @@ class PergiKerja():
         self.config = ctrl.config
 
     def construct_msg(self) -> str:
-        msg = f"Weather\n\nStatus: {self.ctrl.weather.morning}\nMax temp: {self.ctrl.weather.max_temp}\n\nTraffic"
+        msg = f"Weather\nMorning: {self.ctrl.weather.morning}\nNoon: {self.ctrl.weather.afternoon}\
+            \nMax temp: {self.ctrl.weather.max_temp}\nMin temp:{self.ctrl.weather.min_temp}"
+        
         for trf in self.ctrl.traffic:
             trf: Union[BusInfo, TrainInfo]
+            msg += f"\n\nTraffic"
             if isinstance(trf, BusInfo):
                 msg += f"\nBus ID: {trf.bus_id}\nPlate: {trf.plate_num}\n"
             elif isinstance(trf, TrainInfo):
