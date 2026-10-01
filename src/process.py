@@ -1,7 +1,8 @@
 # import google
 import requests
-
 import json
+import time
+
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -13,7 +14,7 @@ from models import *
 
 class DataCtrl(object):
     config: Configs = None
-    traffic: Union[BusInfo, TrainInfo] = None
+    traffic: Union[BusInfo, TrainInfo] = []
     weather: WeatherInfo = None
     active_trip: Trip = None
 
@@ -61,6 +62,8 @@ class DataCtrl(object):
     def process_traffic(
         self,
     ) -> None:
+        if not self.active_trip:
+            return
         routes = list()
         for r in self.active_trip.routes:
             if r["vehicle"] == VEHICLE_BUS:        
@@ -110,7 +113,11 @@ class DataCtrl(object):
         self.traffic = routes
 
     def fetch_weather(self) -> None:
-        FULL_ENDPOINT = rf"{WEATHER_URL}{self.active_trip.location}"
+        if not self.active_trip:
+            location = DEFAULT_LOCATION
+        else:
+            location = self.active_trip.location
+        FULL_ENDPOINT = rf"{WEATHER_URL}{location}"
         response = requests.get(FULL_ENDPOINT)
         if not response.ok:
             return "Cannot get weather data. "
@@ -166,17 +173,20 @@ if __name__ == "__main__":
     
     interval = int(ctrl.config.general.interval)  # minutes
     delta = timedelta(minutes=interval)
-    start_time = datetime.now()
-    running = True
-    while running:
+    start_time = datetime.now()  # reset after executing process once
+    proc = PergiKerja(
+        ctrl=ctrl
+    )
+    proc.main() # run process once in the beginning, then once after interval time
+    while True:
         time_diff = datetime.now() - start_time
-        if (time_diff.seconds > 0 or time_diff.microseconds > 20) and time_diff.seconds < delta.seconds:
+        if time_diff.seconds < delta.seconds:
             continue
 
         if not ctrl.active_trip:
             print("No active trip")
         else:
-            proc = PergiKerja(
-                ctrl=ctrl
-            )
             proc.main()
+            start_time = datetime.now()
+            
+        time.sleep(30)

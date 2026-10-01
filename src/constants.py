@@ -2,6 +2,7 @@ BUS_KL_URL = r"https://api.data.gov.my/gtfs-realtime/vehicle-position/prasarana?
 # LRT_KELANA_URL = r"https://api.data.gov.my/gtfs-realtime/vehicle-position/prasarana?category=rapid-rail-kl"
 LRT_STAT_URL = r"https://api.mtrec.name.my/api/servicestatus"
 
+DEFAULT_LOCATION = "Petaling%20Jaya@location__location_name"
 WEATHER_URL = r"https://api.data.gov.my/weather/forecast/?contains="
 
 VEHICLE_BUS = "bus"
