@@ -1,4 +1,4 @@
-# import google
+import os
 import requests
 import json
 import time
@@ -19,7 +19,8 @@ class DataCtrl(object):
     active_trip: Trip = None
 
     def get_config(self):
-        with open(Path("./src/tool.json"), "r") as x:
+        path = Path(os.path.abspath(__file__)).parent / r"tool.json"
+        with open(path, "r") as x:
             data = json.load(x)
             gen = data["general"]
             trips = list()
