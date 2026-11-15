@@ -182,6 +182,7 @@ if __name__ == "__main__":
     while True:
         time_diff = datetime.now() - start_time
         if time_diff.seconds < delta.seconds:
+            print(time_diff.seconds)
             continue
 
         if not ctrl.active_trip:

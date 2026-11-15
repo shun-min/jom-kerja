@@ -1,7 +1,7 @@
 {
   "general": {
     "timezone": "GMT+8",
-    "interval": "5"
+    "interval": "1"
   },
   "trips": [{
     "activity": "work",
@@ -75,7 +75,7 @@
       "m": 0
     },
     "duration_end": {
-      "h": 11,
+      "h": 9,
       "m": 0
     },
     "routes": [
@@ -98,7 +98,7 @@
       "Sunday"
     ],
     "duration_start": {
-      "h": 13,
+      "h": 12,
       "m": 30
     },
     "duration_end": {
