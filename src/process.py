@@ -178,19 +178,5 @@ if __name__ == "__main__":
     proc = PergiKerja(
         ctrl=ctrl
     )
-    proc.main() # run process once in the beginning, then once after interval time
-    while True:
-        time_diff = datetime.now() - start_time
-        if time_diff < delta:
-            print(f"===={start_time.second} {time_diff.seconds}")
-            print(time_diff.total_seconds())
-            time.sleep(1)
-            continue
+    proc.main()
 
-        if not ctrl.active_trip:
-            print("No active trip")
-        else:
-            proc.main()
-            start_time = datetime.now()
-
-        time.sleep(30)
