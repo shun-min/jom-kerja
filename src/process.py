@@ -167,16 +167,14 @@ class PergiKerja():
         )
 
 if __name__ == "__main__":
-        
     ctrl = DataCtrl()
     ctrl.get_config()
     ctrl.fetch_trips()
     
-    interval = int(ctrl.config.general.interval)  # minutes
-    delta = timedelta(minutes=interval)
-    start_time = datetime.now()  # reset after executing process once
+    
     proc = PergiKerja(
         ctrl=ctrl
     )
-    proc.main()
-
+    proc.main() # run process once in the beginning, then once after interval time
+    if not ctrl.active_trip:
+        print("No active trip")
