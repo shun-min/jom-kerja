@@ -57,7 +57,7 @@ class DataCtrl(object):
             end_time = datetime.strptime(
                 rf"{now.year}-{now.month}-{now.day} {t_end["h"]}:{t_end["m"]}", "%Y-%m-%d %H:%M"
             ).astimezone()
-            if now >= start_time and now <= end_time:
+            if start_time <= now <= end_time:
                 self.active_trip = trip
 
     def process_traffic(
@@ -175,6 +175,8 @@ if __name__ == "__main__":
     proc = PergiKerja(
         ctrl=ctrl
     )
-    proc.main() # run process once in the beginning, then once after interval time
+
     if not ctrl.active_trip:
         print("No active trip")
+    else:
+        proc.main()    
